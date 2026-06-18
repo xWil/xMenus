@@ -1,0 +1,5 @@
+name: xMenus
+version: '${version}'
+
+main: gg.wil.xmenus.XMenus
+api-version: '26.1'
