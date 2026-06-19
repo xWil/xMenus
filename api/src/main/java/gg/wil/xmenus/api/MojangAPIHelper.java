@@ -20,6 +20,21 @@ public class MojangAPIHelper {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private static final Map<String, String> UUID_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, JsonObject> PROFILE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, PlayerProfile> PLAYER_CACHE = new ConcurrentHashMap<>();
+
+    public static boolean isUUIDCached(String name) {
+        return UUID_CACHE.containsKey(name);
+    }
+
+    public static boolean isProfileCached(String name) {
+        String rawUUID = UUID_CACHE.get(name);
+        if (rawUUID == null) return false;
+        return PROFILE_CACHE.containsKey(rawUUID);
+    }
+
+    public static boolean isPlayerCached(String name) {
+        return PLAYER_CACHE.containsKey(name);
+    }
 
     public static String getRawUUID(String name) {
         String cached = UUID_CACHE.get(name);
@@ -78,6 +93,9 @@ public class MojangAPIHelper {
     }
 
     public static PlayerProfile getPlayerProfile(String name) {
+        PlayerProfile cached = PLAYER_CACHE.get(name);
+        if (cached != null) return cached;
+
         String uuid = getRawUUID(name);
         if (uuid == null) return null;
 
@@ -95,6 +113,7 @@ public class MojangAPIHelper {
             textures.setSkin(URI.create(skinURL).toURL());
             playerProfile.setTextures(textures);
 
+            PLAYER_CACHE.put(name, playerProfile);
             return playerProfile;
         } catch (Exception ignored) {}
         return null;

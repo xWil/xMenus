@@ -10,11 +10,11 @@ import java.util.function.Function;
 
 public class DynamicItemDescriptor implements ItemDescriptor {
 
-    private final Function<ActiveMenuItem, Material> material;
-    private final Function<ActiveMenuItem, String> name;
-    private final Function<ActiveMenuItem, List<String>> lore;
-    private final Function<ActiveMenuItem, Integer> amount;
-    private final Function<ActiveMenuItem, Boolean> glowing;
+    protected final Function<ActiveMenuItem, Material> material;
+    protected final Function<ActiveMenuItem, String> name;
+    protected final Function<ActiveMenuItem, List<String>> lore;
+    protected final Function<ActiveMenuItem, Integer> amount;
+    protected final Function<ActiveMenuItem, Boolean> glowing;
 
     protected DynamicItemDescriptor(Function<ActiveMenuItem, Material> material, Function<ActiveMenuItem, String> name, Function<ActiveMenuItem, List<String>> lore,
                                     Function<ActiveMenuItem, Integer> amount, Function<ActiveMenuItem, Boolean> glowing) {

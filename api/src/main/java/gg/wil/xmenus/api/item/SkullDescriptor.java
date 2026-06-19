@@ -57,6 +57,10 @@ public class SkullDescriptor extends SimpleItemDescriptor {
 
         protected Builder() {}
 
+        public DynamicSkullDescriptor.Builder dynamic() {
+            return new DynamicSkullDescriptor.Builder();
+        }
+
         public SkullDescriptor.Builder owner(String owner) {
             if (owner != null) this.owner = owner;
             return this;
@@ -83,7 +87,7 @@ public class SkullDescriptor extends SimpleItemDescriptor {
             return this;
         }
 
-        public SkullDescriptor build() {
+        public ItemDescriptor build() {
             return new SkullDescriptor(this.owner, this.name, this.lore, this.amount, this.glowing);
         }
     }
