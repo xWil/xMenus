@@ -12,4 +12,8 @@ public class ItemDescriptorBuilder {
     public SimpleItemDescriptor.Builder simple() {
         return new SimpleItemDescriptor.Builder();
     }
+
+    public SkullDescriptor.Builder skull() {
+        return new SkullDescriptor.Builder();
+    }
 }

@@ -10,14 +10,14 @@ import java.util.List;
 public class SimpleItemDescriptor implements ItemDescriptor {
 
     private final Material material;
-    private final String name;
-    private final List<String> lore;
-    private final int amount;
-    private final boolean glowing;
+    protected final String name;
+    protected final List<String> lore;
+    protected final int amount;
+    protected final boolean glowing;
 
     private ItemStack cache;
 
-    private SimpleItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing) {
+    protected SimpleItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing) {
         this.material = material;
         this.name = name;
         this.lore = lore;

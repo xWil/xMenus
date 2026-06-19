@@ -71,6 +71,11 @@ public class ActiveMenuItem {
         this.menu.move(this, oldPos);
     }
 
+    public void refresh() {
+        this.itemStack = this.item.getDescriptor().getItemStack(this);
+        this.menu.update(this);
+    }
+
     public void onClick(InventoryClickEvent event) {
         if (this.item.getClickHandler() == null) return;
         this.item.getClickHandler().accept(this, event);
