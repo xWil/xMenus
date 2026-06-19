@@ -46,8 +46,12 @@ public final class Menu {
     }
 
     public void open(final JavaPlugin plugin, final Player player) {
+        this.open(plugin, player, null);
+    }
+
+    public void open(final JavaPlugin plugin, final Player player, Object attachment) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            PlayerMenu menu = new PlayerMenu(this, player);
+            PlayerMenu menu = new PlayerMenu(this, player, attachment);
 
             MenuManager manager = MenuManager.get(plugin);
             if (manager == null) return;
@@ -64,7 +68,7 @@ public final class Menu {
     public static class MenuBuilder {
 
         private int size = 9;
-        private Function<PlayerMenu, String> title = (_) -> "§xMenus Menu";
+        private Function<PlayerMenu, String> title = (_) -> "§cxMenus Menu";
         private Map<MenuItem, int[]> contents = new HashMap<>();
         private MenuItem background = null;
         private Consumer<PlayerMenu> closeHandler = null;

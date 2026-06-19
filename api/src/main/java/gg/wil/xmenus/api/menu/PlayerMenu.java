@@ -17,6 +17,7 @@ public class PlayerMenu {
 
     private final Menu menu;
     private final Player viewer;
+    private final Object attachment;
 
     private Inventory inventory;
     private List<ActiveMenuItem> items;
@@ -25,9 +26,10 @@ public class PlayerMenu {
 
     private final AtomicBoolean closing = new AtomicBoolean(false);
 
-    protected PlayerMenu(final Menu menu, final Player viewer) {
+    protected PlayerMenu(final Menu menu, final Player viewer, Object attachment) {
         this.menu = menu;
         this.viewer = viewer;
+        this.attachment = attachment;
         this.buildInventory();
     }
 
@@ -76,6 +78,10 @@ public class PlayerMenu {
 
     public Player getViewer() {
         return this.viewer;
+    }
+
+    public Object getAttachment() {
+        return this.attachment;
     }
 
     public Inventory getInventory() {
