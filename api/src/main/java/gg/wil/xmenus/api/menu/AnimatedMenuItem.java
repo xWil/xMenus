@@ -4,6 +4,7 @@ import gg.wil.xmenus.api.item.ItemDescriptor;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -12,10 +13,10 @@ public class AnimatedMenuItem extends MenuItem {
     private final int animateRate;
     private final List<ItemDescriptor> descriptors;
 
-    private AnimatedMenuItem(int pos, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors) {
+    private AnimatedMenuItem(int pos, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors, boolean swapList) {
         super(pos, clickHandler);
         this.animateRate = animateRate;
-        this.descriptors = descriptors;
+        this.descriptors = swapList ? Collections.unmodifiableList(descriptors) : descriptors;
     }
 
     @Override
@@ -29,6 +30,11 @@ public class AnimatedMenuItem extends MenuItem {
 
     public int getAnimateRate() {
         return this.animateRate;
+    }
+
+    @Override
+    public AnimatedMenuItem copy(int newPos) {
+        return new AnimatedMenuItem(newPos, this.clickHandler, this.animateRate, this.descriptors, false);
     }
 
     public static AnimatedMenuItem.Builder builder() {
@@ -85,7 +91,7 @@ public class AnimatedMenuItem extends MenuItem {
         }
 
         public AnimatedMenuItem build() {
-            return new AnimatedMenuItem(this.pos, this.clickHandler, this.animateRate, this.descriptors);
+            return new AnimatedMenuItem(this.pos, this.clickHandler, this.animateRate, this.descriptors, true);
         }
     }
 }

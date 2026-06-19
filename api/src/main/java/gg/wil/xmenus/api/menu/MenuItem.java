@@ -39,6 +39,10 @@ public class MenuItem {
         return new ActiveMenuItem(menu, this);
     }
 
+    public MenuItem copy(int newSlot) {
+        return new MenuItem(newSlot, this.descriptor, this.clickHandler);
+    }
+
     public static MenuItem of(int pos, ItemDescriptor descriptor, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler) {
         return new MenuItem(pos, descriptor, clickHandler);
     }
