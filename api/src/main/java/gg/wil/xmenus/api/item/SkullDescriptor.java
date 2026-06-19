@@ -12,10 +12,12 @@ import org.bukkit.profile.PlayerProfile;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SkullDescriptor extends SimpleItemDescriptor {
 
     private volatile PlayerProfile profile = null;
+    private List<ActiveMenuItem> itemsToRefresh = null;
     private ItemStack cache = null;
 
     public SkullDescriptor(String owner, String name, List<String> lore, int amount, boolean glowing) {
@@ -23,7 +25,12 @@ public class SkullDescriptor extends SimpleItemDescriptor {
 
         Player player = Bukkit.getPlayerExact(owner);
         if (player != null) this.profile = player.getPlayerProfile();
-        else CompletableFuture.runAsync(() -> this.profile = MojangAPIHelper.getPlayerProfile(owner));
+        else {
+            this.itemsToRefresh = new CopyOnWriteArrayList<>();
+            CompletableFuture.runAsync(() -> this.profile = MojangAPIHelper.getPlayerProfile(owner))
+                    .thenRun(() -> this.itemsToRefresh.forEach(ActiveMenuItem::refresh))
+                    .thenRun(() -> this.itemsToRefresh = null);
+        }
     }
 
     @Override
@@ -43,7 +50,11 @@ public class SkullDescriptor extends SimpleItemDescriptor {
         }
         itemStack.setItemMeta(meta);
 
-        if (hasProfile) this.cache = itemStack;
+        if (hasProfile) {
+            this.cache = itemStack;
+        } else {
+            this.itemsToRefresh.add(menu);
+        }
         return itemStack;
     }
 
