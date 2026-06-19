@@ -96,7 +96,14 @@ public final class Menu {
             return this;
         }
 
-        public MenuBuilder addItem(MenuItem item, int... slots) {
+        public MenuBuilder addItem(MenuItem item, int slot, int... slots) {
+            if (slots.length == 0) slots = new int[] { slot };
+            else {
+                int[] newSlots = new int[slots.length + 1];
+                newSlots[0] = slot;
+                System.arraycopy(slots, 0, newSlots, 1, slots.length);
+                slots = newSlots;
+            }
             this.contents.put(item, slots);
             return this;
         }
