@@ -22,7 +22,7 @@ public class PlayerMenu {
     private ActiveMenuItem[] contents;
     private ActiveMenuItem backgroundItem;
 
-    private AtomicBoolean closing = new AtomicBoolean(false);
+    private final AtomicBoolean closing = new AtomicBoolean(false);
 
     protected PlayerMenu(final Menu menu, final Player viewer) {
         this.menu = menu;
@@ -31,7 +31,7 @@ public class PlayerMenu {
     }
 
     private void buildInventory() {
-        this.inventory = Bukkit.createInventory(null, this.menu.getSize(), this.menu.getTitle());
+        this.inventory = Bukkit.createInventory(null, this.menu.getSize(), this.menu.getTitle(this));
         this.items = new ArrayList<>(this.menu.getContents().size());
         this.contents = new ActiveMenuItem[this.menu.getSize()];
 
@@ -44,6 +44,7 @@ public class PlayerMenu {
         ItemStack[] items = new ItemStack[this.menu.getSize()];
         MenuItem backgroundMenuItem = this.menu.getBackground();
         this.backgroundItem = backgroundMenuItem == null ? null : backgroundMenuItem.getActive(this);
+        if (this.backgroundItem != null) this.backgroundItem.markAsBackground();
 
         for (int i = 0; i < this.menu.getSize(); i++) {
             ActiveMenuItem activeItem = this.contents[i];
@@ -71,6 +72,10 @@ public class PlayerMenu {
 
     public ActiveMenuItem getItem(int slot) {
         return this.contents[slot];
+    }
+
+    public List<ActiveMenuItem> getItems() {
+        return this.items;
     }
 
     protected void open() {

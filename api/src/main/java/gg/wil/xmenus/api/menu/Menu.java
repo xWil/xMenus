@@ -7,16 +7,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class Menu {
 
     private final int size;
-    private final String title;
+    private final Function<PlayerMenu, String> title;
     private final List<MenuItem> contents;
     private final MenuItem background;
     private final Consumer<PlayerMenu> closeHandler;
 
-    private Menu(int size, String title, List<MenuItem> contents, MenuItem background, Consumer<PlayerMenu> closeHandler) {
+    private Menu(int size, Function<PlayerMenu, String> title, List<MenuItem> contents, MenuItem background, Consumer<PlayerMenu> closeHandler) {
         this.size = size;
         this.title = title;
         this.contents = contents;
@@ -28,8 +29,8 @@ public final class Menu {
         return this.size;
     }
 
-    public String getTitle() {
-        return this.title;
+    public String getTitle(PlayerMenu menu) {
+        return this.title.apply(menu);
     }
 
     public List<MenuItem> getContents() {
@@ -63,7 +64,7 @@ public final class Menu {
     public static class MenuBuilder {
 
         private int size = 9;
-        private String title = "§cxMenus menu";
+        private Function<PlayerMenu, String> title = (_) -> "§xMenus Menu";
         private List<MenuItem> contents = new ArrayList<>();
         private MenuItem background = null;
         private Consumer<PlayerMenu> closeHandler = null;
@@ -76,6 +77,11 @@ public final class Menu {
         }
 
         public MenuBuilder title(String title) {
+            this.title = (_) -> title;
+            return this;
+        }
+
+        public MenuBuilder title(Function<PlayerMenu, String> title) {
             this.title = title;
             return this;
         }
