@@ -9,15 +9,15 @@ public class MenuItem {
 
     protected final int pos;
     private final ItemDescriptor descriptor;
-    protected final BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler;
+    protected final BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler;
 
-    protected MenuItem(int pos, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler) {
+    protected MenuItem(int pos, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
         this.pos = pos;
         this.descriptor = null;
         this.clickHandler = clickHandler;
     }
 
-    private MenuItem(int pos, ItemDescriptor descriptor, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler) {
+    private MenuItem(int pos, ItemDescriptor descriptor, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
         this.pos = pos;
         this.descriptor = descriptor;
         this.clickHandler = clickHandler;
@@ -31,7 +31,7 @@ public class MenuItem {
         return descriptor;
     }
 
-    public BiConsumer<PlayerMenu, InventoryClickEvent> getClickHandler() {
+    public BiConsumer<ActiveMenuItem, InventoryClickEvent> getClickHandler() {
         return this.clickHandler;
     }
 
@@ -43,7 +43,7 @@ public class MenuItem {
         return new MenuItem(newSlot, this.descriptor, this.clickHandler);
     }
 
-    public static MenuItem of(int pos, ItemDescriptor descriptor, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler) {
+    public static MenuItem of(int pos, ItemDescriptor descriptor, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
         return new MenuItem(pos, descriptor, clickHandler);
     }
 }

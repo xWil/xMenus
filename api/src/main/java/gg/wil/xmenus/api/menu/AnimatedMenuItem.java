@@ -13,7 +13,7 @@ public class AnimatedMenuItem extends MenuItem {
     private final int animateRate;
     private final List<ItemDescriptor> descriptors;
 
-    private AnimatedMenuItem(int pos, BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors, boolean swapList) {
+    private AnimatedMenuItem(int pos, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors, boolean swapList) {
         super(pos, clickHandler);
         this.animateRate = animateRate;
         this.descriptors = swapList ? Collections.unmodifiableList(descriptors) : descriptors;
@@ -44,7 +44,7 @@ public class AnimatedMenuItem extends MenuItem {
     public static class Builder {
 
         private int pos = 0;
-        private BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler;
+        private BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler;
         private int animateRate;
         private List<ItemDescriptor> descriptors = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class AnimatedMenuItem extends MenuItem {
             return this;
         }
 
-        public AnimatedMenuItem.Builder onClick(BiConsumer<PlayerMenu, InventoryClickEvent> clickHandler) {
+        public AnimatedMenuItem.Builder onClick(BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
             this.clickHandler = clickHandler;
             return this;
         }

@@ -77,6 +77,6 @@ public class ActiveMenuItem {
 
     public void onClick(InventoryClickEvent event) {
         if (this.item.getClickHandler() == null) return;
-        this.item.getClickHandler().accept(this.menu, event);
+        this.item.getClickHandler().accept(this, event);
     }
 }
