@@ -72,7 +72,11 @@ public class ActiveMenuItem {
     }
 
     public void refresh() {
-        this.itemStack = this.item.getDescriptor().getItemStack(this);
+        if (this.animatedItem == null) {
+            this.itemStack = this.item.getDescriptor().getItemStack(this);
+        } else {
+            this.itemStack = this.animatedItem.getDescriptors().get(this.frame).getItemStack(this);
+        }
         this.menu.update(this);
     }
 
