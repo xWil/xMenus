@@ -34,9 +34,20 @@ public class PlayerMenu {
     private void buildInventory() {
         this.inventory = Bukkit.createInventory(null, this.menu.getSize(), this.menu.getTitle(this));
         this.items = new ArrayList<>(this.menu.getContents().size());
+        this.buildContentsArray();
+        this.buildInitialLayout();
+
+        MenuItem backgroundMenuItem = this.menu.getBackground();
+        this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, -1);
+        this.inventory.setContents(this.buildContents());
+    }
+
+    private void buildContentsArray() {
         this.contents = new ArrayList<>(this.menu.getSize());
         for (int i = 0; i < this.menu.getSize(); i++) this.contents.add(new ArrayList<>(3));
+    }
 
+    private void buildInitialLayout() {
         for (Map.Entry<MenuItem, int[]> entry : this.menu.getContents().entrySet()) {
             MenuItem item = entry.getKey();
             for (int slot : entry.getValue()) {
@@ -45,10 +56,10 @@ public class PlayerMenu {
                 this.contents.get(slot).add(activeItem);
             }
         }
+    }
 
+    private ItemStack[] buildContents() {
         ItemStack[] items = new ItemStack[this.menu.getSize()];
-        MenuItem backgroundMenuItem = this.menu.getBackground();
-        this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, -1);
 
         for (int i = 0; i < this.menu.getSize(); i++) {
             List<ActiveMenuItem> slotItems = this.contents.get(i);
@@ -56,7 +67,7 @@ public class PlayerMenu {
             items[i] = activeItem != null ? activeItem.getItemStack() : this.backgroundItem == null ? null : this.backgroundItem.getItemStack();
         }
 
-        this.inventory.setContents(items);
+        return items;
     }
 
     public Menu getMenu() {
@@ -129,6 +140,23 @@ public class PlayerMenu {
         this.contents.get(oldPos).remove(item);
         this.contents.get(item.getPosition()).add(item);
         this.update(oldPos, item.getPosition());
+    }
+
+    public void reset() {
+        this.items.clear();
+        this.contents.forEach(List::clear);
+        this.buildInitialLayout();
+        this.inventory.setContents(this.buildContents());
+    }
+
+    public void rebuild() {
+        this.contents.forEach(List::clear);
+        this.items.forEach(item -> this.contents.get(item.getPosition()).add(item));
+        this.inventory.setContents(this.buildContents());
+    }
+
+    public void refresh() {
+        this.inventory.setContents(this.buildContents());
     }
 
     protected void onClick(InventoryClickEvent event) {
