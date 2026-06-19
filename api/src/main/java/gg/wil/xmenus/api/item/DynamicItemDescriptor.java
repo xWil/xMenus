@@ -48,19 +48,19 @@ public class DynamicItemDescriptor implements ItemDescriptor {
 
         @Override
         public Builder material(Material material) {
-            this.material = material;
+            if (material != null) this.material = material;
             return this;
         }
 
         @Override
         public Builder name(String name) {
-            this.name = name;
+            if (name != null) this.name = name;
             return this;
         }
 
         @Override
         public Builder lore(List<String> lore) {
-            this.lore = lore;
+            if (lore != null) this.lore = lore;
             return this;
         }
 
