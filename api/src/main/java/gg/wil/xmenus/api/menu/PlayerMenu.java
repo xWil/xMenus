@@ -20,7 +20,7 @@ public class PlayerMenu {
 
     private Inventory inventory;
     private List<ActiveMenuItem> items;
-    private ActiveMenuItem[] contents;
+    private List<List<ActiveMenuItem>> contents;
     private ActiveMenuItem backgroundItem;
 
     private final AtomicBoolean closing = new AtomicBoolean(false);
@@ -34,14 +34,15 @@ public class PlayerMenu {
     private void buildInventory() {
         this.inventory = Bukkit.createInventory(null, this.menu.getSize(), this.menu.getTitle(this));
         this.items = new ArrayList<>(this.menu.getContents().size());
-        this.contents = new ActiveMenuItem[this.menu.getSize()];
+        this.contents = new ArrayList<>(this.menu.getSize());
+        for (int i = 0; i < this.menu.getSize(); i++) this.contents.add(new ArrayList<>(3));
 
         for (Map.Entry<MenuItem, int[]> entry : this.menu.getContents().entrySet()) {
             MenuItem item = entry.getKey();
             for (int slot : entry.getValue()) {
                 ActiveMenuItem activeItem = new ActiveMenuItem(this, item, slot);
                 this.items.add(activeItem);
-                this.contents[slot] = activeItem;
+                this.contents.get(slot).add(activeItem);
             }
         }
 
@@ -50,7 +51,8 @@ public class PlayerMenu {
         this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, -1);
 
         for (int i = 0; i < this.menu.getSize(); i++) {
-            ActiveMenuItem activeItem = this.contents[i];
+            List<ActiveMenuItem> slotItems = this.contents.get(i);
+            ActiveMenuItem activeItem = slotItems.isEmpty() ? null : slotItems.getLast();
             items[i] = activeItem != null ? activeItem.getItemStack() : this.backgroundItem == null ? null : this.backgroundItem.getItemStack();
         }
 
@@ -73,8 +75,15 @@ public class PlayerMenu {
         return this.backgroundItem;
     }
 
-    public ActiveMenuItem getItem(int slot) {
-        return this.contents[slot];
+    public ActiveMenuItem getTopItem(int slot) {
+        if (slot < 0 || slot >= this.contents.size()) return null;
+        List<ActiveMenuItem> slotItems = this.contents.get(slot);
+        return slotItems.isEmpty() ? null : slotItems.getLast();
+    }
+
+    public List<ActiveMenuItem> getSlotItems(int slot) {
+        if (slot < 0 || slot >= this.contents.size()) return null;
+        return this.contents.get(slot);
     }
 
     public List<ActiveMenuItem> getItems() {
@@ -90,6 +99,11 @@ public class PlayerMenu {
         if (!this.closing.compareAndSet(false, true)) return;
         if (this.menu.getCloseHandler() != null) this.menu.getCloseHandler().accept(this);
         this.viewer.closeInventory();
+
+        this.inventory = null;
+        this.items.clear();
+        this.contents.clear();
+        this.backgroundItem = null;
     }
 
     public void tick() {
@@ -98,7 +112,9 @@ public class PlayerMenu {
 
     public void update(int... slots) {
         for (int slot : slots) {
-            ActiveMenuItem item = this.contents[slot];
+            List<ActiveMenuItem> slotItems = this.contents.get(slot);
+            ActiveMenuItem item = slotItems.isEmpty() ? null : slotItems.getLast();
+
             if (item != null) this.inventory.setItem(slot, item.getItemStack());
             else if (this.backgroundItem != null) this.inventory.setItem(slot, this.backgroundItem.getItemStack());
             else this.inventory.setItem(slot, null);
@@ -110,8 +126,8 @@ public class PlayerMenu {
     }
 
     protected void move(ActiveMenuItem item, int oldPos) {
-        this.contents[oldPos] = null;
-        this.contents[item.getPosition()] = item;
+        this.contents.get(oldPos).remove(item);
+        this.contents.get(item.getPosition()).add(item);
         this.update(oldPos, item.getPosition());
     }
 
@@ -121,7 +137,8 @@ public class PlayerMenu {
         int slot = event.getSlot();
         if (slot < 0 || slot >= this.menu.getSize()) return;
 
-        ActiveMenuItem item = this.contents[slot];
+        List<ActiveMenuItem> slotItems = this.contents.get(slot);
+        ActiveMenuItem item = slotItems.isEmpty() ? null : slotItems.getLast();
         if (item != null) item.onClick(event);
         else if (this.backgroundItem != null) this.backgroundItem.onClick(event);
     }
