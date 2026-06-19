@@ -61,6 +61,18 @@ public class PlayerMenu {
         return this.viewer;
     }
 
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+
+    public ActiveMenuItem getBackgroundItem() {
+        return this.backgroundItem;
+    }
+
+    public ActiveMenuItem getItem(int slot) {
+        return this.contents[slot];
+    }
+
     protected void open() {
         this.viewer.closeInventory();
         this.viewer.openInventory(this.inventory);
@@ -76,8 +88,27 @@ public class PlayerMenu {
         this.items.forEach(ActiveMenuItem::tick);
     }
 
+    public void update(int... slots) {
+        for (int slot : slots) {
+            ActiveMenuItem item = this.contents[slot];
+            if (item != null) this.inventory.setItem(slot, item.getItemStack());
+            else if (this.backgroundItem != null) this.inventory.setItem(slot, this.backgroundItem.getItemStack());
+            else this.inventory.setItem(slot, null);
+        }
+    }
+
+    public void update(ActiveMenuItem item) {
+        this.inventory.setItem(item.getPosition(), item.getItemStack());
+    }
+
+    protected void move(ActiveMenuItem item, int oldPos) {
+        this.contents[oldPos] = null;
+        this.contents[item.getPosition()] = item;
+        this.update(oldPos, item.getPosition());
+    }
+
     protected void onClick(InventoryClickEvent event) {
-        if (event.getClickedInventory().getType() == InventoryType.PLAYER) return;
+        if (event.getClickedInventory() == null ||event.getClickedInventory().getType() == InventoryType.PLAYER) return;
 
         int slot = event.getSlot();
         if (slot < 0 || slot >= this.menu.getSize()) return;

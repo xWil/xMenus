@@ -61,6 +61,7 @@ public class ActiveMenuItem {
             this.frame++;
             if (this.frame >= this.animatedItem.getDescriptors().size()) this.frame = 0;
             this.itemStack = this.animatedItem.getDescriptors().get(this.frame).getItemStack(this);
+            this.menu.update(this);
         }
     }
 
@@ -68,7 +69,10 @@ public class ActiveMenuItem {
         if (this.position == newPos) return;
         if (this.isBackground()) return;
         if (newPos < 0) return;
+
+        int oldPos = this.position;
         this.position = newPos;
+        this.menu.move(this, oldPos);
     }
 
     public void onClick(InventoryClickEvent event) {
