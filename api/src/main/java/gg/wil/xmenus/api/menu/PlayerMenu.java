@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerMenu {
@@ -35,16 +36,18 @@ public class PlayerMenu {
         this.items = new ArrayList<>(this.menu.getContents().size());
         this.contents = new ActiveMenuItem[this.menu.getSize()];
 
-        for (MenuItem item : this.menu.getContents()) {
-            ActiveMenuItem activeItem = item.getActive(this);
-            this.items.add(activeItem);
-            this.contents[item.getPos()] = activeItem;
+        for (Map.Entry<MenuItem, int[]> entry : this.menu.getContents().entrySet()) {
+            MenuItem item = entry.getKey();
+            for (int slot : entry.getValue()) {
+                ActiveMenuItem activeItem = new ActiveMenuItem(this, item, slot);
+                this.items.add(activeItem);
+                this.contents[slot] = activeItem;
+            }
         }
 
         ItemStack[] items = new ItemStack[this.menu.getSize()];
         MenuItem backgroundMenuItem = this.menu.getBackground();
-        this.backgroundItem = backgroundMenuItem == null ? null : backgroundMenuItem.getActive(this);
-        if (this.backgroundItem != null) this.backgroundItem.markAsBackground();
+        this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, -1);
 
         for (int i = 0; i < this.menu.getSize(); i++) {
             ActiveMenuItem activeItem = this.contents[i];

@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -13,11 +13,11 @@ public final class Menu {
 
     private final int size;
     private final Function<PlayerMenu, String> title;
-    private final List<MenuItem> contents;
+    private final Map<MenuItem, int[]> contents;
     private final MenuItem background;
     private final Consumer<PlayerMenu> closeHandler;
 
-    private Menu(int size, Function<PlayerMenu, String> title, List<MenuItem> contents, MenuItem background, Consumer<PlayerMenu> closeHandler) {
+    private Menu(int size, Function<PlayerMenu, String> title, Map<MenuItem, int[]> contents, MenuItem background, Consumer<PlayerMenu> closeHandler) {
         this.size = size;
         this.title = title;
         this.contents = contents;
@@ -33,7 +33,7 @@ public final class Menu {
         return this.title.apply(menu);
     }
 
-    public List<MenuItem> getContents() {
+    public Map<MenuItem, int[]> getContents() {
         return this.contents;
     }
 
@@ -65,7 +65,7 @@ public final class Menu {
 
         private int size = 9;
         private Function<PlayerMenu, String> title = (_) -> "§xMenus Menu";
-        private List<MenuItem> contents = new ArrayList<>();
+        private Map<MenuItem, int[]> contents = new HashMap<>();
         private MenuItem background = null;
         private Consumer<PlayerMenu> closeHandler = null;
 
@@ -91,18 +91,13 @@ public final class Menu {
             return this;
         }
 
-        public MenuBuilder contents(List<MenuItem> contents) {
+        public MenuBuilder contents(Map<MenuItem, int[]> contents) {
             this.contents = contents;
             return this;
         }
 
-        public MenuBuilder contents(MenuItem... contents) {
-            this.contents = new ArrayList<>(List.of(contents));
-            return this;
-        }
-
-        public MenuBuilder addItem(MenuItem item) {
-            this.contents.add(item);
+        public MenuBuilder addItem(MenuItem item, int... slots) {
+            this.contents.put(item, slots);
             return this;
         }
 

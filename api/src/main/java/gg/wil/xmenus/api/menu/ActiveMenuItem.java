@@ -15,10 +15,10 @@ public class ActiveMenuItem {
     private int ticks = 0;
     private int frame = 0;
 
-    protected ActiveMenuItem(final PlayerMenu menu, final MenuItem item) {
+    protected ActiveMenuItem(final PlayerMenu menu, final MenuItem item, int position) {
         this.menu = menu;
         this.item = item;
-        this.position = item.getPos();
+        this.position = position;
 
         if (item instanceof AnimatedMenuItem animated) {
             this.animatedItem = animated;
@@ -43,10 +43,6 @@ public class ActiveMenuItem {
 
     public ItemStack getItemStack() {
         return this.itemStack;
-    }
-
-    protected void markAsBackground() {
-        this.position = -1;
     }
 
     public boolean isBackground() {
