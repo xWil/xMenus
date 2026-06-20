@@ -9,10 +9,19 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manages all active player menus for a plugin.
+ */
 public final class MenuManager {
 
     private static final Map<Plugin, MenuManager> MANAGERS = new HashMap<>();
 
+    /**
+     * Gets the {@link MenuManager} for a plugin.
+     *
+     * @param plugin The {@link Plugin} to get the manager for
+     * @return The {@link MenuManager} for the plugin, or null if the plugin is not enabled
+     */
     public static MenuManager get(Plugin plugin) {
         if (!plugin.isEnabled()) return null;
         return MANAGERS.computeIfAbsent(plugin, MenuManager::new);
@@ -55,6 +64,12 @@ public final class MenuManager {
         this.menus.remove(player);
     }
 
+    /**
+     * Gets the menu for a player.
+     *
+     * @param player The player to get the menu for
+     * @return The menu for the player, or null if the player has no active menu
+     */
     public PlayerMenu getMenu(Player player) {
         return this.menus.get(player);
     }

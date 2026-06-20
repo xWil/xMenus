@@ -7,6 +7,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 
+/**
+ * Handles all events related to menus.
+ */
 public final class MenuListeners implements Listener {
 
     private final MenuManager manager;

@@ -3,6 +3,10 @@ package gg.wil.xmenus.api.menu;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Represents an item that is currently being displayed in a menu.
+ * @see MenuItem
+ */
 public class ActiveMenuItem {
 
     private final PlayerMenu menu;
@@ -31,31 +35,62 @@ public class ActiveMenuItem {
         this.itemStack = item.getDescriptor().getItemStack(this);
     }
 
+    /**
+     * Gets the {@link PlayerMenu} that this item is in.
+     *
+     * @return The {@link PlayerMenu}
+     */
     public PlayerMenu getMenu() {
         return this.menu;
     }
 
+    /**
+     * Gets the {@link MenuItem} related to this item.
+     *
+     * @return The {@link MenuItem}
+     */
     public MenuItem getItem() {
         return this.item;
     }
 
+    /**
+     * Gets the identifier of the {@link MenuItem}.
+     *
+     * @return The identifier of the {@link MenuItem}, or null if there is no identifier
+     */
     public String getIdentifier() {
         return this.identifier;
     }
 
+    /**
+     * Gets the position of the item in the menu.
+     *
+     * @return The position of the item in the menu
+     */
     public int getPosition() {
         return this.position;
     }
 
+    /**
+     * Gets the {@link ItemStack} that currently represents the
+     * {@link gg.wil.xmenus.api.item.ItemDescriptor} currently being displayed.
+     *
+     * @return The {@link ItemStack}
+     */
     public ItemStack getItemStack() {
         return this.itemStack;
     }
 
+    /**
+     * Checks if this item is the background item.
+     *
+     * @return True if this item is the background item, false otherwise
+     */
     public boolean isBackground() {
         return this.position == -1;
     }
 
-    public void tick() {
+    protected void tick() {
         if (this.animatedItem == null) return;
         this.ticks++;
         if (this.ticks >= this.animatedItem.getAnimateRate()) {
@@ -67,6 +102,12 @@ public class ActiveMenuItem {
         }
     }
 
+    /**
+     * Moves this item to a new position in the menu.
+     * If the item is the background item, it will not move.
+     *
+     * @param newPos The new position of the item
+     */
     public void move(int newPos) {
         if (this.position == newPos) return;
         if (this.isBackground()) return;
@@ -77,6 +118,9 @@ public class ActiveMenuItem {
         this.menu.move(this, oldPos);
     }
 
+    /**
+     * Refreshes the item's {@link ItemStack} based on the current {@link gg.wil.xmenus.api.item.ItemDescriptor}.
+     */
     public void refresh() {
         if (this.animatedItem == null) {
             this.itemStack = this.item.getDescriptor().getItemStack(this);
@@ -86,7 +130,7 @@ public class ActiveMenuItem {
         this.menu.update(this);
     }
 
-    public void onClick(InventoryClickEvent event) {
+    protected void onClick(InventoryClickEvent event) {
         if (this.item.getClickHandler() == null) return;
         this.item.getClickHandler().accept(this, event);
     }
