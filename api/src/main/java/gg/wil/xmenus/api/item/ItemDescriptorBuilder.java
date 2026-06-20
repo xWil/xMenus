@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public abstract class ItemDescriptorBuilder<T> {
 
-    protected String name = "Item";
+    protected String name = "§cxMenus Item";
     protected List<String> lore = List.of();
     protected int amount = 1;
     protected boolean glowing = false;
@@ -33,88 +33,195 @@ public abstract class ItemDescriptorBuilder<T> {
 
     protected abstract T getInstance();
 
+    /**
+     * Sets the display name of the item
+     *
+     * @param name The display name of the item
+     * @return The builder itself
+     */
     public T name(String name) {
         if (name != null) this.name = name;
         return this.getInstance();
     }
 
+    /**
+     * Sets the {@link Function} that will be used to get the display name of the item.
+     *
+     * @param nameSupplier The {@link Function} that will be used to get the display name of the item.
+     * @return The builder itself
+     */
     public final T name(Function<ActiveMenuItem, String> nameSupplier) {
         this.nameSupplier = nameSupplier;
         return this.getInstance();
     }
 
+    /**
+     * Sets the lore of the item
+     *
+     * @param lore A String list representing the lore of the item
+     * @return The builder itself
+     */
     public T lore(List<String> lore) {
         if (lore != null) this.lore = lore;
         return this.getInstance();
     }
 
+    /**
+     * Sets the {@link Function} that will be used to get the lore of the item.
+     *
+     * @param loreSupplier The {@link Function} that will be used to get the lore of the item.
+     * @return The builder itself
+     */
     public final T lore(Function<ActiveMenuItem, List<String>> loreSupplier) {
         this.loreSupplier = loreSupplier;
         return this.getInstance();
     }
 
+    /**
+     * Sets the item count for the item
+     *
+     * @param amount The item count for the item
+     * @return The builder itself
+     */
     public T amount(int amount) {
         Preconditions.checkArgument(amount >= 1, "Amount must be greater than or equal to 1");
         this.amount = amount;
         return this.getInstance();
     }
 
+    /**
+     * Sets the {@link Function} that will be used to get the item count for the item.
+     *
+     * @param amountSupplier The {@link Function} that will be used to get the item count for the item.
+     * @return The builder itself
+     */
     public final T amount(Function<ActiveMenuItem, Integer> amountSupplier) {
         this.amountSupplier = amountSupplier;
         return this.getInstance();
     }
 
+    /**
+     * Sets whether the item should be glowing
+     *
+     * @param glowing Whether the item should be glowing
+     * @return The builder itself
+     */
     public T glowing(boolean glowing) {
         this.glowing = glowing;
         return this.getInstance();
     }
 
+    /**
+     * Sets the {@link Function} that will be used to get whether the item should be glowing.
+     *
+     * @param glowingSupplier The {@link Function} that will be used to get whether the item should be glowing.
+     * @return The builder itself
+     */
     public final T glowing(Function<ActiveMenuItem, Boolean> glowingSupplier) {
         this.glowingSupplier = glowingSupplier;
         return this.getInstance();
     }
 
+    /**
+     * Adds an {@link ItemFlag} to the item
+     *
+     * @param flag The {@link ItemFlag} to add
+     * @return The builder itself
+     */
     public T flag(ItemFlag flag) {
         if (flag != null) this.flags.add(flag);
         return this.getInstance();
     }
 
+    /**
+     * Adds multiple {@link ItemFlag}s to the item
+     *
+     * @param flags The {@link ItemFlag}s to add
+     * @return The builder itself
+     */
     public T flags(ItemFlag... flags) {
         if (flags != null) this.flags.addAll(Arrays.asList(flags));
         return this.getInstance();
     }
 
+    /**
+     * Sets the {@link Function} that will be used to get the {@link ItemFlag}s for the item.
+     * @param flagsSupplier The {@link Function} that will be used to get the {@link ItemFlag}s for the item.
+     * @return The builder itself
+     */
     public final T flags(Function<ActiveMenuItem, List<ItemFlag>> flagsSupplier) {
         this.flagsSupplier = flagsSupplier;
         return this.getInstance();
     }
 
+    /**
+     * Builds the {@link ItemDescriptor}
+     *
+     * @return The built {@link ItemDescriptor}
+     */
     public abstract ItemDescriptor build();
 
     public static class InitialBuilder extends ItemDescriptorBuilder<ItemBuilder> {
 
         protected InitialBuilder() {}
 
+        /**
+         * Creates a {@link ItemStackDescriptor} from an {@link ItemStack}
+         *
+         * @param itemStack The {@link ItemStack} to create the {@link ItemStackDescriptor} from
+         * @return A new {@link ItemStackDescriptor} with the given {@link ItemStack}
+         */
         public ItemDescriptor itemStack(ItemStack itemStack) {
             return new ItemStackDescriptor(itemStack);
         }
 
+        /**
+         * Switches the builder to a {@link SkullBuilder}
+         *
+         * @return A new {@link SkullBuilder}
+         */
         public SkullBuilder skull() {
             return new SkullBuilder();
         }
 
+        /**
+         * Switches the builder to a {@link SkullBuilder} and sets the owner of the skull
+         *
+         * @param owner The name used to get a skin for the skull
+         * @return A new {@link SkullBuilder} with the given owner
+         */
         public SkullBuilder skull(String owner) {
             return new SkullBuilder().owner(owner);
         }
 
+        /**
+         * Switches the builder to a {@link SkullBuilder} and sets the
+         * {@link Function} that will be used to get the owner of the skull.
+         *
+         * @param ownerSupplier A {@link Function} that returns the name used to get a skin for the skull
+         * @return A new {@link SkullBuilder} with the given {@link Function}
+         */
         public SkullBuilder skull(Function<ActiveMenuItem, String> ownerSupplier) {
             return new SkullBuilder().owner(ownerSupplier);
         }
 
+        /**
+         * Switches the builder to a {@link ItemBuilder} and sets the material of the item
+         *
+         * @param material The material of the item
+         * @return A new {@link ItemBuilder} with the given material
+         */
         public ItemBuilder material(Material material) {
             return new ItemBuilder().material(material);
         }
 
+        /**
+         * Switches the builder to a {@link ItemBuilder} and sets the {@link Function}
+         * that will be used to get the material of the item.
+         *
+         * @param materialSupplier A {@link Function} that returns the material of the item
+         * @return A new {@link ItemBuilder} with the given {@link Function}
+         */
         public final ItemBuilder material(Function<ActiveMenuItem, Material> materialSupplier) {
             return new ItemBuilder().material(materialSupplier);
         }
@@ -124,12 +231,21 @@ public abstract class ItemDescriptorBuilder<T> {
             return new ItemBuilder();
         }
 
+        /**
+         * Builds the {@link ItemDescriptor}
+         * Can only be a {@link StaticItemDescriptor} with the default values
+         *
+         * @return The built {@link ItemDescriptor}
+         */
         @Override
         public ItemDescriptor build() {
             return new StaticItemDescriptor(Material.STONE, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
     }
 
+    /**
+     * A builder for {@link ItemDescriptor}s that can build a {@link StaticItemDescriptor} or a {@link DynamicItemDescriptor}.
+     */
     public static class ItemBuilder extends ItemDescriptorBuilder<ItemBuilder> {
 
         private Material material = Material.STONE;
@@ -142,18 +258,36 @@ public abstract class ItemDescriptorBuilder<T> {
             return this;
         }
 
+        /**
+         * Sets the material of the item
+         *
+         * @param material The material of the item
+         * @return The builder itself
+         */
         public ItemBuilder material(Material material) {
             if (material != null) this.material = material;
             return this;
         }
 
+        /**
+         * Sets the {@link Function} that will be used to get the material of the item.
+         *
+         * @param materialSupplier The {@link Function} that will be used to get the material of the item.
+         * @return The builder itself
+         */
         public final ItemBuilder material(Function<ActiveMenuItem, Material> materialSupplier) {
             this.materialSupplier = materialSupplier;
             return this;
         }
 
+        /**
+         * Builds the {@link ItemDescriptor}
+         * Can either be a {@link StaticItemDescriptor} or a {@link DynamicItemDescriptor}
+         *
+         * @return The built {@link ItemDescriptor}
+         */
         public ItemDescriptor build() {
-            if (isDynamic()) return buildDynamic();
+            if (isDynamic()) return this.buildDynamic();
             return new StaticItemDescriptor(this.material, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
 
@@ -175,6 +309,9 @@ public abstract class ItemDescriptorBuilder<T> {
         }
     }
 
+    /**
+     * A builder for {@link ItemDescriptor}s that can build a {@link StaticSkullDescriptor} or a {@link DynamicSkullDescriptor}.
+     */
     public static class SkullBuilder extends ItemDescriptorBuilder<SkullBuilder> {
 
         private String owner = "xWil";
@@ -187,16 +324,34 @@ public abstract class ItemDescriptorBuilder<T> {
             return this;
         }
 
+        /**
+         * Sets the owner of the skull
+         *
+         * @param owner The name of a player whose skin will be used for the skull
+         * @return The builder itself
+         */
         public SkullBuilder owner(String owner) {
             if (owner != null) this.owner = owner;
             return this;
         }
 
+        /**
+         * Sets the {@link Function} that will be used to get the owner of the skull.
+         *
+         * @param ownerSupplier A {@link Function} that returns the name of a player whose skin will be used for the skull
+         * @return The builder itself
+         */
         public final SkullBuilder owner(Function<ActiveMenuItem, String> ownerSupplier) {
             this.ownerSupplier = ownerSupplier;
             return this;
         }
 
+        /**
+         * Builds the {@link ItemDescriptor}
+         * Can either be a {@link StaticSkullDescriptor} or a {@link DynamicSkullDescriptor}
+         *
+         * @return The built {@link ItemDescriptor}
+         */
         @Override
         public ItemDescriptor build() {
             if (isDynamic()) return buildDynamic();
