@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+/**
+ * A {@link DynamicItemDescriptor} that represents a skull
+ */
 public class DynamicSkullDescriptor extends DynamicItemDescriptor {
 
     private final Function<ActiveMenuItem, String> owner;

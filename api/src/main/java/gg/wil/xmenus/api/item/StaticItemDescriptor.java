@@ -7,7 +7,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class SimpleItemDescriptor implements ItemDescriptor {
+/**
+ * An {@link ItemDescriptor} that represents an item that is
+ * always the same.
+ */
+public class StaticItemDescriptor implements ItemDescriptor {
 
     private final Material material;
     protected final String name;
@@ -18,7 +22,7 @@ public class SimpleItemDescriptor implements ItemDescriptor {
 
     private ItemStack cache;
 
-    protected SimpleItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
+    protected StaticItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
         this.material = material;
         this.name = name;
         this.lore = lore;

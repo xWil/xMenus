@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A builder for {@link ItemDescriptor}s
+ * @param <T> The type of the builder itself
+ */
 public abstract class ItemDescriptorBuilder<T> {
 
     protected String name = "Item";
@@ -122,7 +126,7 @@ public abstract class ItemDescriptorBuilder<T> {
 
         @Override
         public ItemDescriptor build() {
-            return new SimpleItemDescriptor(Material.STONE, this.name, this.lore, this.amount, this.glowing, this.flags);
+            return new StaticItemDescriptor(Material.STONE, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
     }
 
@@ -150,7 +154,7 @@ public abstract class ItemDescriptorBuilder<T> {
 
         public ItemDescriptor build() {
             if (isDynamic()) return buildDynamic();
-            return new SimpleItemDescriptor(this.material, this.name, this.lore, this.amount, this.glowing, this.flags);
+            return new StaticItemDescriptor(this.material, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
 
         private boolean isDynamic() {
@@ -196,7 +200,7 @@ public abstract class ItemDescriptorBuilder<T> {
         @Override
         public ItemDescriptor build() {
             if (isDynamic()) return buildDynamic();
-            return new SkullDescriptor(this.owner, this.name, this.lore, this.amount, this.glowing, this.flags);
+            return new StaticSkullDescriptor(this.owner, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
 
         private boolean isDynamic() {

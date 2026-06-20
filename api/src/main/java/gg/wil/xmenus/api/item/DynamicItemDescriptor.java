@@ -8,6 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * An {@link ItemDescriptor} that represents an item that is dynamic
+ * and changes based on the {@link Function}s provided.
+ */
 public class DynamicItemDescriptor implements ItemDescriptor {
 
     protected final Function<ActiveMenuItem, Material> material;

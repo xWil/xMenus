@@ -14,13 +14,16 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SkullDescriptor extends SimpleItemDescriptor {
+/**
+ * A {@link StaticItemDescriptor} that represents a skull
+ */
+public class StaticSkullDescriptor extends StaticItemDescriptor {
 
     private volatile PlayerProfile profile = null;
     private List<ActiveMenuItem> itemsToRefresh = null;
     private ItemStack cache = null;
 
-    protected SkullDescriptor(String owner, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
+    protected StaticSkullDescriptor(String owner, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
         super(Material.PLAYER_HEAD, name, lore, amount, glowing, flags);
 
         Player player = Bukkit.getPlayerExact(owner);
