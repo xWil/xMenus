@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,6 +22,7 @@ public class PlayerMenu {
 
     private Inventory inventory;
     private List<ActiveMenuItem> items;
+    private Map<String, List<ActiveMenuItem>> identifierMap;
     private List<List<ActiveMenuItem>> contents;
     private ActiveMenuItem backgroundItem;
 
@@ -36,11 +38,12 @@ public class PlayerMenu {
     private void buildInventory() {
         this.inventory = Bukkit.createInventory(null, this.menu.getSize(), this.menu.getTitle(this));
         this.items = new ArrayList<>(this.menu.getContents().size());
+        this.identifierMap = new HashMap<>();
         this.buildContentsArray();
         this.buildInitialLayout();
 
         MenuItem backgroundMenuItem = this.menu.getBackground();
-        this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, -1);
+        this.backgroundItem = backgroundMenuItem == null ? null : new ActiveMenuItem(this, backgroundMenuItem, backgroundMenuItem.getIdentifier(), -1);
         this.inventory.setContents(this.buildContents());
     }
 
@@ -53,7 +56,10 @@ public class PlayerMenu {
         for (Map.Entry<MenuItem, int[]> entry : this.menu.getContents().entrySet()) {
             MenuItem item = entry.getKey();
             for (int slot : entry.getValue()) {
-                ActiveMenuItem activeItem = new ActiveMenuItem(this, item, slot);
+                String identifier = item.getIdentifier();
+                ActiveMenuItem activeItem = new ActiveMenuItem(this, item, identifier, slot);
+
+                this.identifierMap.computeIfAbsent(identifier, _ -> new ArrayList<>()).add(activeItem);
                 this.items.add(activeItem);
                 this.contents.get(slot).add(activeItem);
             }
@@ -105,6 +111,18 @@ public class PlayerMenu {
 
     public List<ActiveMenuItem> getItems() {
         return this.items;
+    }
+
+    public List<ActiveMenuItem> getItems(String identifier) {
+        List<ActiveMenuItem> items = this.identifierMap.get(identifier);
+        if (items == null) return null;
+        return new ArrayList<>(items);
+    }
+
+    public ActiveMenuItem getItem(String identifier) {
+        List<ActiveMenuItem> items = this.identifierMap.get(identifier);
+        if (items == null || items.isEmpty()) return null;
+        return items.getFirst();
     }
 
     protected void open() {

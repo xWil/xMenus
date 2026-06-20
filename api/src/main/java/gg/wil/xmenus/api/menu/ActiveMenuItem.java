@@ -7,6 +7,7 @@ public class ActiveMenuItem {
 
     private final PlayerMenu menu;
     private final MenuItem item;
+    private final String identifier;
 
     private int position;
     private ItemStack itemStack;
@@ -15,9 +16,10 @@ public class ActiveMenuItem {
     private int ticks = 0;
     private int frame = 0;
 
-    protected ActiveMenuItem(final PlayerMenu menu, final MenuItem item, int position) {
+    protected ActiveMenuItem(final PlayerMenu menu, final MenuItem item, String identifier, int position) {
         this.menu = menu;
         this.item = item;
+        this.identifier = identifier;
         this.position = position;
 
         if (item instanceof AnimatedMenuItem animated) {
@@ -35,6 +37,10 @@ public class ActiveMenuItem {
 
     public MenuItem getItem() {
         return this.item;
+    }
+
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     public int getPosition() {

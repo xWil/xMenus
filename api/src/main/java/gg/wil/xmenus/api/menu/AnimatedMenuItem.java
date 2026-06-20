@@ -13,8 +13,8 @@ public class AnimatedMenuItem extends MenuItem {
     private final int animateRate;
     private final List<ItemDescriptor> descriptors;
 
-    private AnimatedMenuItem(BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors, boolean swapList) {
-        super(clickHandler);
+    private AnimatedMenuItem(String identifier, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler, int animateRate, List<ItemDescriptor> descriptors, boolean swapList) {
+        super(identifier, clickHandler);
         this.animateRate = animateRate;
         this.descriptors = swapList ? Collections.unmodifiableList(descriptors) : descriptors;
     }
@@ -34,8 +34,7 @@ public class AnimatedMenuItem extends MenuItem {
 
     @Override
     public MenuItem clone() {
-        super.clone();
-        return new AnimatedMenuItem(this.clickHandler, this.animateRate, this.descriptors, false);
+        return new AnimatedMenuItem(this.identifier, this.clickHandler, this.animateRate, this.descriptors, false);
     }
 
     public static AnimatedMenuItem.Builder builder() {
@@ -44,11 +43,17 @@ public class AnimatedMenuItem extends MenuItem {
 
     public static class Builder {
 
-        private BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler;
-        private int animateRate;
+        private String identifier = null;
+        private BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler = null;
+        private int animateRate = 1;
         private List<ItemDescriptor> descriptors = new ArrayList<>();
 
         private Builder() {}
+
+        public AnimatedMenuItem.Builder identifier(String identifier) {
+            this.identifier = identifier;
+            return this;
+        }
 
         public AnimatedMenuItem.Builder onClick(BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
             this.clickHandler = clickHandler;
@@ -86,7 +91,7 @@ public class AnimatedMenuItem extends MenuItem {
         }
 
         public AnimatedMenuItem build() {
-            return new AnimatedMenuItem(this.clickHandler, this.animateRate, this.descriptors, true);
+            return new AnimatedMenuItem(this.identifier, this.clickHandler, this.animateRate, this.descriptors, true);
         }
     }
 }
