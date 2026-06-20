@@ -12,8 +12,12 @@ public interface  ItemDescriptor {
 
     ItemStack getItemStack(ActiveMenuItem menu);
 
-    static ItemDescriptorBuilder builder() {
-        return new ItemDescriptorBuilder();
+    static ItemDescriptor fromItemStack(ItemStack itemStack) {
+        return new ItemStackDescriptor(itemStack);
+    }
+
+    static ItemDescriptorBuilder.InitialBuilder builder() {
+        return new ItemDescriptorBuilder.InitialBuilder();
     }
 
     static ItemStack createItemStack(Material material, String name, List<String> lore, int amount, boolean glowing, ItemFlag... flags) {

@@ -1,7 +1,6 @@
 package gg.wil.xmenus.api.menu;
 
 import gg.wil.xmenus.api.item.ItemDescriptor;
-import gg.wil.xmenus.api.item.ItemStackDescriptor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +21,7 @@ public class MenuItems {
         itemMeta.setHideTooltip(true);
         itemStack.setItemMeta(itemMeta);
 
-        return MenuItem.of(ItemStackDescriptor.of(itemStack), clickHandler);
+        return MenuItem.of(ItemDescriptor.fromItemStack(itemStack), clickHandler);
     }
 
     public static MenuItem simple(Material material, int amount, String name, List<String> lore, boolean glowing) {
@@ -30,7 +29,7 @@ public class MenuItems {
     }
 
     public static MenuItem simple(Material material, int amount, String name, List<String> lore, boolean glowing, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
-        ItemDescriptor descriptor = ItemDescriptor.builder().simple()
+        ItemDescriptor descriptor = ItemDescriptor.builder()
                 .material(material)
                 .amount(amount)
                 .name(name)
@@ -41,10 +40,10 @@ public class MenuItems {
     }
 
     public static MenuItem fromItemStack(ItemStack itemStack) {
-        return MenuItem.of(ItemStackDescriptor.of(itemStack), null);
+        return MenuItem.of(ItemDescriptor.fromItemStack(itemStack), null);
     }
 
     public static MenuItem fromItemStack(ItemStack itemStack, BiConsumer<ActiveMenuItem, InventoryClickEvent> clickHandler) {
-        return MenuItem.of(ItemStackDescriptor.of(itemStack), clickHandler);
+        return MenuItem.of(ItemDescriptor.fromItemStack(itemStack), clickHandler);
     }
 }

@@ -7,16 +7,12 @@ public class ItemStackDescriptor implements ItemDescriptor {
 
     private final ItemStack itemStack;
 
-    private ItemStackDescriptor(ItemStack itemStack) {
+    protected ItemStackDescriptor(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
     @Override
     public ItemStack getItemStack(ActiveMenuItem menu) {
         return this.itemStack;
-    }
-
-    public static ItemStackDescriptor of(ItemStack itemStack) {
-        return new ItemStackDescriptor(itemStack);
     }
 }
