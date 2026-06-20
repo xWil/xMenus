@@ -3,8 +3,10 @@ package gg.wil.xmenus.api.item;
 import com.google.common.base.Preconditions;
 import gg.wil.xmenus.api.menu.ActiveMenuItem;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -15,14 +17,16 @@ public class DynamicItemDescriptor implements ItemDescriptor {
     protected final Function<ActiveMenuItem, List<String>> lore;
     protected final Function<ActiveMenuItem, Integer> amount;
     protected final Function<ActiveMenuItem, Boolean> glowing;
+    protected final Function<ActiveMenuItem, List<ItemFlag>> flags;
 
     protected DynamicItemDescriptor(Function<ActiveMenuItem, Material> material, Function<ActiveMenuItem, String> name, Function<ActiveMenuItem, List<String>> lore,
-                                    Function<ActiveMenuItem, Integer> amount, Function<ActiveMenuItem, Boolean> glowing) {
+                                    Function<ActiveMenuItem, Integer> amount, Function<ActiveMenuItem, Boolean> glowing, Function<ActiveMenuItem, List<ItemFlag>> flags) {
         this.material = material;
         this.name = name;
         this.lore = lore;
         this.amount = amount;
         this.glowing = glowing;
+        this.flags = flags;
     }
 
     @Override
@@ -32,8 +36,9 @@ public class DynamicItemDescriptor implements ItemDescriptor {
         List<String> lore = this.lore == null ? List.of() : this.lore.apply(item);
         int amount = this.amount == null ? 1 : this.amount.apply(item);
         boolean glowing = this.glowing != null && this.glowing.apply(item);
+        List<ItemFlag> flags = this.flags == null ? List.of() : this.flags.apply(item);
 
-        return ItemDescriptor.createItemStack(material, name, lore, amount, glowing);
+        return ItemDescriptor.createItemStack(material, name, lore, amount, glowing, flags.toArray(new ItemFlag[0]));
     }
 
     public static class Builder extends SimpleItemDescriptor.Builder {
@@ -43,6 +48,7 @@ public class DynamicItemDescriptor implements ItemDescriptor {
         private Function<ActiveMenuItem, List<String>> loreSupplier = null;
         private Function<ActiveMenuItem, Integer> amountSupplier = null;
         private Function<ActiveMenuItem, Boolean> glowingSupplier = null;
+        private Function<ActiveMenuItem, List<ItemFlag>> flagsSupplier = null;
 
         protected Builder() {}
 
@@ -77,6 +83,18 @@ public class DynamicItemDescriptor implements ItemDescriptor {
             return this;
         }
 
+        @Override
+        public Builder flags(ItemFlag... flags) {
+            if (flags != null) this.flags.addAll(Arrays.asList(flags));
+            return this;
+        }
+
+        @Override
+        public Builder flag(ItemFlag flag) {
+            if (flag != null) this.flags.add(flag);
+            return this;
+        }
+
         public final Builder material(Function<ActiveMenuItem, Material> materialSupplier) {
             this.materialSupplier = materialSupplier;
             return this;
@@ -102,14 +120,21 @@ public class DynamicItemDescriptor implements ItemDescriptor {
             return this;
         }
 
+        public final Builder flags(Function<ActiveMenuItem, List<ItemFlag>> flagsSupplier) {
+            this.flagsSupplier = flagsSupplier;
+            return this;
+        }
+
         @Override
         public ItemDescriptor build() {
-            if (materialSupplier == null) materialSupplier = (_) -> this.material;
-            if (nameSupplier == null) nameSupplier = (_) -> this.name;
-            if (loreSupplier == null) loreSupplier = (_) -> this.lore;
-            if (amountSupplier == null) amountSupplier = (_) -> this.amount;
-            if (glowingSupplier == null) glowingSupplier = (_) -> this.glowing;
-            return new DynamicItemDescriptor(this.materialSupplier, this.nameSupplier, this.loreSupplier, this.amountSupplier, this.glowingSupplier);
+            if (this.materialSupplier == null) this.materialSupplier = (_) -> this.material;
+            if (this.nameSupplier == null) this.nameSupplier = (_) -> this.name;
+            if (this.loreSupplier == null) this.loreSupplier = (_) -> this.lore;
+            if (this.amountSupplier == null) this.amountSupplier = (_) -> this.amount;
+            if (this.glowingSupplier == null) this.glowingSupplier = (_) -> this.glowing;
+            if (this.flagsSupplier == null) this.flagsSupplier = (_) -> this.flags;
+
+            return new DynamicItemDescriptor(this.materialSupplier, this.nameSupplier, this.loreSupplier, this.amountSupplier, this.glowingSupplier, this.flagsSupplier);
         }
     }
 }

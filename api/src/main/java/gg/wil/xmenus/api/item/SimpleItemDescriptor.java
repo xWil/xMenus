@@ -3,8 +3,11 @@ package gg.wil.xmenus.api.item;
 import com.google.common.base.Preconditions;
 import gg.wil.xmenus.api.menu.ActiveMenuItem;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SimpleItemDescriptor implements ItemDescriptor {
@@ -14,20 +17,22 @@ public class SimpleItemDescriptor implements ItemDescriptor {
     protected final List<String> lore;
     protected final int amount;
     protected final boolean glowing;
+    protected final List<ItemFlag> flags;
 
     private ItemStack cache;
 
-    protected SimpleItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing) {
+    protected SimpleItemDescriptor(Material material, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
         this.material = material;
         this.name = name;
         this.lore = lore;
         this.amount = amount;
         this.glowing = glowing;
+        this.flags = flags;
     }
 
     @Override
     public ItemStack getItemStack(ActiveMenuItem item) {
-        if (cache == null) this.cache = ItemDescriptor.createItemStack(this.material, this.name, this.lore, this.amount, this.glowing);
+        if (cache == null) this.cache = ItemDescriptor.createItemStack(this.material, this.name, this.lore, this.amount, this.glowing, this.flags.toArray(new ItemFlag[0]));
         return this.cache;
     }
 
@@ -38,6 +43,7 @@ public class SimpleItemDescriptor implements ItemDescriptor {
         protected List<String> lore = List.of();
         protected int amount = 1;
         protected boolean glowing = false;
+        protected List<ItemFlag> flags = new ArrayList<>();
 
         protected Builder() {}
 
@@ -67,8 +73,18 @@ public class SimpleItemDescriptor implements ItemDescriptor {
             return this;
         }
 
+        public Builder flags(ItemFlag... flags) {
+            if (flags != null) this.flags.addAll(Arrays.asList(flags));
+            return this;
+        }
+
+        public Builder flag(ItemFlag flag) {
+            if (flag != null) this.flags.add(flag);
+            return this;
+        }
+
         public ItemDescriptor build() {
-            return new SimpleItemDescriptor(this.material, this.name, this.lore, this.amount, this.glowing);
+            return new SimpleItemDescriptor(this.material, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
     }
 }

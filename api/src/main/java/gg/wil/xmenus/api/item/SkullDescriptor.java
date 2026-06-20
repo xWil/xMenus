@@ -6,10 +6,13 @@ import gg.wil.xmenus.api.menu.ActiveMenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,8 +23,8 @@ public class SkullDescriptor extends SimpleItemDescriptor {
     private List<ActiveMenuItem> itemsToRefresh = null;
     private ItemStack cache = null;
 
-    public SkullDescriptor(String owner, String name, List<String> lore, int amount, boolean glowing) {
-        super(Material.PLAYER_HEAD, name, lore, amount, glowing);
+    public SkullDescriptor(String owner, String name, List<String> lore, int amount, boolean glowing, List<ItemFlag> flags) {
+        super(Material.PLAYER_HEAD, name, lore, amount, glowing, flags);
 
         Player player = Bukkit.getPlayerExact(owner);
         if (player != null) this.profile = player.getPlayerProfile();
@@ -48,6 +51,7 @@ public class SkullDescriptor extends SimpleItemDescriptor {
             hasProfile = true;
             meta.setOwnerProfile(this.profile);
         }
+        meta.addItemFlags(this.flags.toArray(new ItemFlag[0]));
         itemStack.setItemMeta(meta);
 
         if (hasProfile) {
@@ -65,6 +69,7 @@ public class SkullDescriptor extends SimpleItemDescriptor {
         protected List<String> lore = List.of();
         protected int amount = 1;
         protected boolean glowing = false;
+        List<ItemFlag> flags = new ArrayList<>();
 
         protected Builder() {}
 
@@ -98,8 +103,18 @@ public class SkullDescriptor extends SimpleItemDescriptor {
             return this;
         }
 
+        public Builder flags(ItemFlag... flags) {
+            if (flags != null) this.flags.addAll(Arrays.asList(flags));
+            return this;
+        }
+
+        public Builder flag(ItemFlag flag) {
+            if (flag != null) this.flags.add(flag);
+            return this;
+        }
+
         public ItemDescriptor build() {
-            return new SkullDescriptor(this.owner, this.name, this.lore, this.amount, this.glowing);
+            return new SkullDescriptor(this.owner, this.name, this.lore, this.amount, this.glowing, this.flags);
         }
     }
 }

@@ -6,10 +6,12 @@ import gg.wil.xmenus.api.menu.ActiveMenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -18,8 +20,9 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
 
     private final Function<ActiveMenuItem, String> owner;
 
-    protected DynamicSkullDescriptor(Function<ActiveMenuItem, String> owner, Function<ActiveMenuItem, String> name, Function<ActiveMenuItem, List<String>> lore, Function<ActiveMenuItem, Integer> amount, Function<ActiveMenuItem, Boolean> glowing) {
-        super(null, name, lore, amount, glowing);
+    protected DynamicSkullDescriptor(Function<ActiveMenuItem, String> owner, Function<ActiveMenuItem, String> name, Function<ActiveMenuItem, List<String>> lore,
+                                     Function<ActiveMenuItem, Integer> amount, Function<ActiveMenuItem, Boolean> glowing, Function<ActiveMenuItem, List<ItemFlag>> flags) {
+        super(null, name, lore, amount, glowing, flags);
         this.owner = owner;
     }
 
@@ -30,6 +33,7 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
         List<String> lore = this.lore.apply(item);
         int amount = this.amount.apply(item);
         boolean glowing = this.glowing.apply(item);
+        List<ItemFlag> flags = this.flags.apply(item);
 
         PlayerProfile profile = null;
         Player player = Bukkit.getPlayerExact(owner);
@@ -50,6 +54,7 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
         meta.setLore(lore);
         meta.setEnchantmentGlintOverride(glowing);
         if (profile != null) meta.setOwnerProfile(profile);
+        meta.addItemFlags(flags.toArray(new ItemFlag[0]));
         itemStack.setItemMeta(meta);
 
         return itemStack;
@@ -62,6 +67,9 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
         private Function<ActiveMenuItem, List<String>> loreSupplier = null;
         private Function<ActiveMenuItem, Integer> amountSupplier = null;
         private Function<ActiveMenuItem, Boolean> glowingSupplier = null;
+        private Function <ActiveMenuItem, List<ItemFlag>> flagsSupplier = null;
+
+        protected Builder() {}
 
         @Override
         public Builder owner(String owner) {
@@ -94,6 +102,18 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
             return this;
         }
 
+        @Override
+        public Builder flags(ItemFlag... flags) {
+            if (flags != null) this.flags.addAll(Arrays.asList(flags));
+            return this;
+        }
+
+        @Override
+        public Builder flag(ItemFlag flag) {
+            if (flag != null) this.flags.add(flag);
+            return this;
+        }
+
         public final Builder owner(Function<ActiveMenuItem, String> ownerSupplier) {
             this.ownerSupplier = ownerSupplier;
             return this;
@@ -119,6 +139,11 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
             return this;
         }
 
+        public final Builder flags(Function<ActiveMenuItem, List<ItemFlag>> flagsSupplier) {
+            this.flagsSupplier = flagsSupplier;
+            return this;
+        }
+
         @Override
         public ItemDescriptor build() {
             if (this.ownerSupplier == null) this.ownerSupplier = (_) -> this.owner;
@@ -126,7 +151,9 @@ public class DynamicSkullDescriptor extends DynamicItemDescriptor {
             if (this.loreSupplier == null) this.loreSupplier = (_) -> this.lore;
             if (this.amountSupplier == null) this.amountSupplier = (_) -> this.amount;
             if (this.glowingSupplier == null) this.glowingSupplier = (_) -> this.glowing;
-            return new DynamicSkullDescriptor(this.ownerSupplier, this.nameSupplier, this.loreSupplier, this.amountSupplier, this.glowingSupplier);
+            if (this.flagsSupplier == null) this.flagsSupplier = (_) -> this.flags;
+
+            return new DynamicSkullDescriptor(this.ownerSupplier, this.nameSupplier, this.loreSupplier, this.amountSupplier, this.glowingSupplier, this.flagsSupplier);
         }
     }
 }
